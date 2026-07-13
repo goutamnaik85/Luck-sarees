@@ -1,0 +1,94 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+    function isAdmin() {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // ---------------- Users ----------------
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId);
+      // Customers may update their own profile but never their own role.
+      allow update: if isOwner(userId) && request.resource.data.role == resource.data.role || isAdmin();
+      allow delete: if isAdmin();
+
+      // Per-user cart/wishlist metadata subcollection
+      match /meta/{doc} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // ---------------- Products (public read, admin write) ----------------
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ---------------- Categories (public read, admin write) ----------------
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ---------------- Banners (public read, admin write) ----------------
+    match /banners/{bannerId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ---------------- Coupons (read for validation, admin write) ----------------
+    match /coupons/{couponId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ---------------- Orders ----------------
+    match /orders/{orderId} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.uid == request.auth.uid);
+      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+      // Only admins may change order status; customers cannot edit orders after creation.
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ---------------- Reviews (signed-in create, public read) ----------------
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if isAdmin() || (isSignedIn() && resource.data.uid == request.auth.uid);
+    }
+
+    // ---------------- Wishlist / Cart (legacy top-level, if used) ----------------
+    match /wishlist/{docId} {
+      allow read, write: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+    }
+    match /cart/{docId} {
+      allow read, write: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+    }
+
+    // ---------------- Settings (admin only) ----------------
+    match /settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ---------------- Notifications ----------------
+    match /notifications/{docId} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.uid == request.auth.uid);
+      allow write: if isAdmin();
+    }
+  }
+}
