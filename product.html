@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">Product — Lucky Collection</title>
+<meta name="theme-color" content="#6B1E3C">
+<link rel="icon" href="/icons/favicon.svg">
+<script src="/js/config.js"></script>
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/responsive.css">
+<link rel="stylesheet" href="/css/animations.css">
+</head>
+<body>
+<div class="page-loader"><span class="spinner"></span></div>
+<div class="announce-bar">Free shipping on orders above ₹1,999 · Handloom sarees crafted across Karnataka</div>
+<header class="navbar">
+  <div class="nav-inner">
+    <a href="/index.html" class="logo">Lucky<span>Collection</span></a>
+    <nav class="nav-links"><a href="/index.html">Home</a><a href="/products.html">Sarees</a><a href="/about.html">About</a><a href="/contact.html">Contact</a></nav>
+    <div class="nav-search">
+      <input type="text" id="nav-search-input" placeholder="Search sarees...">
+      <button aria-label="Search">🔍</button>
+      <div class="search-dropdown" id="nav-search-dropdown" style="position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--white);border-radius:10px;box-shadow:var(--shadow-lg);display:none;max-height:400px;overflow-y:auto;z-index:50"></div>
+    </div>
+    <div class="nav-actions">
+      <a href="/wishlist.html" class="nav-icon-btn">♥<span class="badge" data-wishlist-count style="display:none">0</span></a>
+      <a href="/cart.html" class="nav-icon-btn">🛍<span class="badge" data-cart-count style="display:none">0</span></a>
+      <a href="/login.html" class="nav-icon-btn" data-account-link>👤</a>
+      <button class="mobile-menu-btn nav-icon-btn">☰</button>
+    </div>
+  </div>
+</header>
+<div class="mobile-drawer-overlay"></div>
+<div class="mobile-drawer">
+  <a href="/index.html">Home</a><a href="/products.html">All Sarees</a><a href="/wishlist.html">Wishlist</a><a href="/cart.html">Cart</a><a href="/orders.html">My Orders</a>
+</div>
+
+<div class="container mt-2">
+  <div class="breadcrumb"><a href="/index.html">Home</a><span class="sep">/</span><a href="/products.html">Sarees</a><span class="sep">/</span><span id="breadcrumb-product">Product</span></div>
+</div>
+
+<section class="section" style="padding-top:var(--space-4)" id="pdp-root">
+  <div class="container">
+    <div class="grid pdp-layout">
+      <div>
+        <div class="pdp-gallery-main"><img id="main-image" src="/images/placeholder-saree.jpg" alt=""></div>
+        <div class="pdp-thumbs" id="pdp-thumbs"></div>
+      </div>
+      <div>
+        <span class="cat" id="pdp-cat" style="color:var(--teal);text-transform:uppercase;font-size:0.78rem;font-weight:600;letter-spacing:0.05em"></span>
+        <h1 id="pdp-name" style="margin-top:8px">Loading…</h1>
+        <div class="rating-row" id="pdp-rating"></div>
+        <div class="pdp-price-row">
+          <span class="price" id="pdp-price"></span>
+          <span class="mrp" id="pdp-mrp"></span>
+          <span class="discount" id="pdp-discount"></span>
+        </div>
+        <span id="pdp-stock-status" style="font-size:0.85rem;font-weight:600"></span>
+
+        <div class="mt-1">
+          <h4 style="font-size:0.85rem;margin-bottom:6px">Color: <span id="selected-color-label"></span></h4>
+          <div class="swatch-row" id="color-swatches"></div>
+        </div>
+        <div>
+          <h4 style="font-size:0.85rem;margin-bottom:6px">Blouse Piece: <span id="selected-size-label">Included</span></h4>
+          <div class="size-row" id="size-options">
+            <span class="size-pill active" data-size="Attached">Attached</span>
+            <span class="size-pill" data-size="Unstitched">Unstitched</span>
+          </div>
+        </div>
+        <div class="flex" style="gap:16px;align-items:center;margin:var(--space-5) 0">
+          <div class="qty-stepper">
+            <button id="qty-minus">−</button>
+            <input type="text" id="qty-input" value="1" readonly>
+            <button id="qty-plus">+</button>
+          </div>
+          <button class="btn btn-primary" id="add-to-cart-btn" style="flex:1">Add to Cart</button>
+          <button class="btn-icon" id="wishlist-toggle-btn" style="border:1px solid var(--line)" aria-label="Add to wishlist">♥</button>
+        </div>
+        <div class="flex" style="gap:12px">
+          <button class="btn btn-teal btn-block" id="buy-now-btn">Buy Now</button>
+        </div>
+        <button class="btn btn-ghost btn-sm mt-1" id="share-btn">🔗 Share this saree</button>
+
+        <div class="pdp-tabs mt-2">
+          <div class="pdp-tab active" data-tab="description">Description</div>
+          <div class="pdp-tab" data-tab="specs">Specifications</div>
+          <div class="pdp-tab" data-tab="reviews">Reviews</div>
+        </div>
+        <div class="pdp-tab-panel" id="panel-description"><p id="pdp-description" class="mt-1"></p></div>
+        <div class="pdp-tab-panel hidden" id="panel-specs">
+          <table class="spec-table" id="spec-table"></table>
+        </div>
+        <div class="pdp-tab-panel hidden" id="panel-reviews">
+          <div id="reviews-list" class="mt-1"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background:var(--ivory-deep)">
+  <div class="container">
+    <div class="section-heading reveal"><span class="eyebrow">You May Also Like</span><h2>Related Sarees</h2></div>
+    <div id="related-grid" class="grid product-grid"></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-heading reveal"><span class="eyebrow">Continue Browsing</span><h2>Recently Viewed</h2></div>
+    <div id="recent-grid" class="grid product-grid"></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="grid footer-grid">
+      <div><a href="/index.html" class="logo">Lucky<span>Collection</span></a></div>
+      <div><h4>Shop</h4><a href="/products.html?category=silk">Silk Sarees</a><a href="/products.html?category=cotton">Cotton Sarees</a></div>
+      <div><h4>Company</h4><a href="/about.html">About Us</a><a href="/contact.html">Contact</a></div>
+      <div><h4>Policies</h4><a href="/privacy.html">Privacy Policy</a><a href="/refund-policy.html">Refund Policy</a></div>
+      <div><h4>Get in Touch</h4><p style="font-size:0.88rem">support@luckycollection.in</p></div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 Lucky Collection. All rights reserved.</span></div>
+  </div>
+</footer>
+
+<script type="module">
+  import { initAuthUI } from "/js/auth.js";
+  import { fetchProductById, fetchProducts, renderProductCard, formatPrice, discountPercent } from "/js/products.js";
+  import { addToCart } from "/js/cart.js";
+  import { toggleWishlist, isInWishlist } from "/js/wishlist.js";
+  import { initInstantSearch } from "/js/search.js";
+  import { showToast } from "/js/script.js";
+  import "/js/wishlist.js";
+
+  initAuthUI();
+  initInstantSearch("nav-search-input", "nav-search-dropdown");
+
+  const id = new URLSearchParams(location.search).get("id") || "demo-1";
+  let product, qty = 1, selectedColor = "";
+
+  function trackRecentlyViewed(p) {
+    let recent = JSON.parse(localStorage.getItem("lc_recent") || "[]").filter(r => r.id !== p.id);
+    recent.unshift({ id: p.id, name: p.name, image: p.images?.[0], price: p.price });
+    localStorage.setItem("lc_recent", JSON.stringify(recent.slice(0, 8)));
+  }
+
+  async function renderRecent() {
+    const recent = JSON.parse(localStorage.getItem("lc_recent") || "[]").filter(r => r.id !== id);
+    const el = document.getElementById("recent-grid");
+    if (!recent.length) { document.getElementById("recent-grid").closest("section").style.display = "none"; return; }
+    const products = await Promise.all(recent.slice(0, 4).map(r => fetchProductById(r.id)));
+    products.forEach(p => el.appendChild(renderProductCard(p)));
+  }
+
+  async function init() {
+    product = await fetchProductById(id);
+    trackRecentlyViewed(product);
+    document.getElementById("page-title").textContent = product.name + " — Lucky Collection";
+    document.getElementById("breadcrumb-product").textContent = product.name;
+    document.getElementById("pdp-cat").textContent = product.fabric || product.category;
+    document.getElementById("pdp-name").textContent = product.name;
+    document.getElementById("main-image").src = product.images?.[0] || "/images/placeholder-saree.jpg";
+    document.getElementById("main-image").alt = product.name;
+    document.getElementById("pdp-price").textContent = formatPrice(product.price);
+    const disc = discountPercent(product.mrp, product.price);
+    if (disc > 0) {
+      document.getElementById("pdp-mrp").textContent = formatPrice(product.mrp);
+      document.getElementById("pdp-discount").textContent = disc + "% off";
+    }
+    document.getElementById("pdp-rating").innerHTML = `<span class="stars">${"★".repeat(Math.round(product.avgRating||4))}${"☆".repeat(5-Math.round(product.avgRating||4))}</span><span>${product.avgRating||4} (${product.reviewCount||0} reviews)</span>`;
+    const stockEl = document.getElementById("pdp-stock-status");
+    if (product.stock > 5) { stockEl.textContent = "✓ In Stock"; stockEl.style.color = "var(--success)"; }
+    else if (product.stock > 0) { stockEl.textContent = `Only ${product.stock} left!`; stockEl.style.color = "var(--danger)"; }
+    else { stockEl.textContent = "Out of Stock"; stockEl.style.color = "var(--danger)"; document.getElementById("add-to-cart-btn").disabled = true; document.getElementById("buy-now-btn").disabled = true; }
+
+    document.getElementById("pdp-description").textContent = product.description ||
+      `A ${product.fabric || "handcrafted"} saree in ${product.color || "a rich shade"}, ideal for ${product.occasion || "everyday elegance"}. Woven with care and finished with an authentic zari border.`;
+
+    document.getElementById("spec-table").innerHTML = `
+      <tr><td>Fabric</td><td>${product.fabric || "—"}</td></tr>
+      <tr><td>Color</td><td>${product.color || "—"}</td></tr>
+      <tr><td>Occasion</td><td>${product.occasion || "—"}</td></tr>
+      <tr><td>Weight</td><td>${product.weight || "—"}</td></tr>
+      <tr><td>SKU</td><td>${product.id}</td></tr>
+      <tr><td>Blouse Piece</td><td>Attached (0.8m)</td></tr>`;
+
+    const thumbs = document.getElementById("pdp-thumbs");
+    (product.images?.length ? product.images : [product.images?.[0] || "/images/placeholder-saree.jpg"]).forEach((img, i) => {
+      const t = document.createElement("img");
+      t.src = img; t.className = i === 0 ? "active" : "";
+      t.addEventListener("click", () => { document.getElementById("main-image").src = img; thumbs.querySelectorAll("img").forEach(x => x.classList.remove("active")); t.classList.add("active"); });
+      thumbs.appendChild(t);
+    });
+
+    selectedColor = product.color || "Maroon";
+    document.getElementById("selected-color-label").textContent = selectedColor;
+    const colorMap = { Maroon: "#6B1E3C", Green: "#0F5257", Blue: "#1D4E89", Pink: "#D46A8C", Teal: "#0F5257", Ivory: "#F3EBDA", Red: "#B3261E", Purple: "#5B2A8C" };
+    const swatchWrap = document.getElementById("color-swatches");
+    [selectedColor, "Maroon", "Teal", "Ivory"].filter((v, i, a) => a.indexOf(v) === i).slice(0, 4).forEach((c, i) => {
+      const s = document.createElement("div");
+      s.className = "swatch" + (i === 0 ? " active" : "");
+      s.style.background = colorMap[c] || "#999";
+      s.title = c;
+      s.addEventListener("click", () => { swatchWrap.querySelectorAll(".swatch").forEach(x => x.classList.remove("active")); s.classList.add("active"); selectedColor = c; document.getElementById("selected-color-label").textContent = c; });
+      swatchWrap.appendChild(s);
+    });
+
+    document.getElementById("wishlist-toggle-btn").classList.toggle("active", isInWishlist(product.id));
+    if (isInWishlist(product.id)) document.getElementById("wishlist-toggle-btn").style.color = "var(--danger)";
+
+    // related products
+    const related = (await fetchProducts({ categoryId: product.category, limit: 8 })).filter(p => p.id !== product.id).slice(0, 4);
+    const relEl = document.getElementById("related-grid");
+    related.forEach(p => relEl.appendChild(renderProductCard(p)));
+    renderRecent();
+    window.initScrollReveal();
+  }
+
+  document.getElementById("qty-minus").addEventListener("click", () => { qty = Math.max(1, qty - 1); document.getElementById("qty-input").value = qty; });
+  document.getElementById("qty-plus").addEventListener("click", () => { qty = Math.min(product?.stock || 10, qty + 1); document.getElementById("qty-input").value = qty; });
+
+  document.querySelectorAll(".size-pill").forEach(pill => {
+    pill.addEventListener("click", () => { document.querySelectorAll(".size-pill").forEach(p => p.classList.remove("active")); pill.classList.add("active"); document.getElementById("selected-size-label").textContent = pill.dataset.size; });
+  });
+
+  document.querySelectorAll(".pdp-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".pdp-tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".pdp-tab-panel").forEach(p => p.classList.add("hidden"));
+      tab.classList.add("active");
+      document.getElementById("panel-" + tab.dataset.tab).classList.remove("hidden");
+    });
+  });
+
+  document.getElementById("add-to-cart-btn").addEventListener("click", () => {
+    addToCart(product, qty, { color: selectedColor });
+    showToast(`${product.name} added to cart`, "success");
+  });
+  document.getElementById("buy-now-btn").addEventListener("click", () => {
+    addToCart(product, qty, { color: selectedColor });
+    window.location.href = "/checkout.html";
+  });
+  document.getElementById("wishlist-toggle-btn").addEventListener("click", async (e) => {
+    const active = await toggleWishlist(product);
+    e.currentTarget.style.color = active ? "var(--danger)" : "";
+    e.currentTarget.classList.add("heart-pop");
+    setTimeout(() => e.currentTarget.classList.remove("heart-pop"), 350);
+  });
+  document.getElementById("share-btn").addEventListener("click", async () => {
+    if (navigator.share) { navigator.share({ title: product.name, url: location.href }); }
+    else { navigator.clipboard.writeText(location.href); showToast("Link copied to clipboard", "success"); }
+  });
+
+  init();
+</script>
+</body>
+</html>

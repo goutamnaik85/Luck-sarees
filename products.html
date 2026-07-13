@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop Sarees Online — Silk, Cotton &amp; Designer | Lucky Collection</title>
+<meta name="description" content="Browse our full collection of silk, cotton and designer sarees. Filter by fabric, price, colour and occasion.">
+<meta name="theme-color" content="#6B1E3C">
+<link rel="icon" href="/icons/favicon.svg">
+<script src="/js/config.js"></script>
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/responsive.css">
+<link rel="stylesheet" href="/css/animations.css">
+</head>
+<body>
+<div class="page-loader"><span class="spinner"></span></div>
+
+<div class="announce-bar">Free shipping on orders above ₹1,999 · Handloom sarees crafted across Karnataka</div>
+<header class="navbar">
+  <div class="nav-inner">
+    <a href="/index.html" class="logo">Lucky<span>Collection</span></a>
+    <nav class="nav-links">
+      <a href="/index.html">Home</a>
+      <a href="/products.html" class="active">Sarees</a>
+      <a href="/about.html">About</a>
+      <a href="/contact.html">Contact</a>
+    </nav>
+    <div class="nav-search">
+      <input type="text" id="nav-search-input" placeholder="Search for silk, cotton, wedding sarees...">
+      <button aria-label="Search">🔍</button>
+      <div class="search-dropdown" id="nav-search-dropdown" style="position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--white);border-radius:10px;box-shadow:var(--shadow-lg);display:none;max-height:400px;overflow-y:auto;z-index:50"></div>
+    </div>
+    <div class="nav-actions">
+      <a href="/wishlist.html" class="nav-icon-btn" aria-label="Wishlist">♥<span class="badge" data-wishlist-count style="display:none">0</span></a>
+      <a href="/cart.html" class="nav-icon-btn" aria-label="Cart">🛍<span class="badge" data-cart-count style="display:none">0</span></a>
+      <a href="/login.html" class="nav-icon-btn" data-account-link aria-label="Account">👤</a>
+      <button class="mobile-menu-btn nav-icon-btn" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</header>
+<div class="mobile-drawer-overlay"></div>
+<div class="mobile-drawer">
+  <a href="/index.html">Home</a>
+  <a href="/products.html">All Sarees</a>
+  <a href="/products.html?category=silk">Silk Sarees</a>
+  <a href="/products.html?category=cotton">Cotton Sarees</a>
+  <a href="/wishlist.html">Wishlist</a>
+  <a href="/cart.html">Cart</a>
+  <a href="/orders.html">My Orders</a>
+  <a href="/about.html">About</a>
+  <a href="/contact.html">Contact</a>
+</div>
+
+<div class="container mt-2">
+  <div class="breadcrumb"><a href="/index.html">Home</a><span class="sep">/</span><span id="breadcrumb-current">All Sarees</span></div>
+</div>
+
+<section class="section" style="padding-top:var(--space-4)">
+  <div class="container">
+    <div class="grid filters-layout">
+      <!-- Filters sidebar -->
+      <aside>
+        <div class="filter-block">
+          <h4>Fabric</h4>
+          <label class="filter-option"><input type="checkbox" name="fabric" value="Kanjivaram Silk"> Kanjivaram Silk</label>
+          <label class="filter-option"><input type="checkbox" name="fabric" value="Banarasi Silk"> Banarasi Silk</label>
+          <label class="filter-option"><input type="checkbox" name="fabric" value="Cotton"> Cotton</label>
+          <label class="filter-option"><input type="checkbox" name="fabric" value="Georgette"> Georgette</label>
+          <label class="filter-option"><input type="checkbox" name="fabric" value="Organza"> Organza</label>
+        </div>
+        <div class="filter-block">
+          <h4>Category</h4>
+          <label class="filter-option"><input type="checkbox" name="category" value="silk"> Silk</label>
+          <label class="filter-option"><input type="checkbox" name="category" value="cotton"> Cotton</label>
+          <label class="filter-option"><input type="checkbox" name="category" value="designer"> Designer</label>
+        </div>
+        <div class="filter-block">
+          <h4>Price Range</h4>
+          <div class="price-range-inputs">
+            <input type="number" id="min-price" placeholder="Min"> <span>–</span> <input type="number" id="max-price" placeholder="Max">
+          </div>
+        </div>
+        <div class="filter-block">
+          <h4>Rating</h4>
+          <label class="filter-option"><input type="checkbox" name="rating" value="4"> 4★ &amp; above</label>
+          <label class="filter-option"><input type="checkbox" name="rating" value="3"> 3★ &amp; above</label>
+        </div>
+        <div class="filter-block">
+          <h4>Availability</h4>
+          <label class="filter-option"><input type="checkbox" id="in-stock-only"> In Stock Only</label>
+        </div>
+        <button class="btn btn-outline btn-block" id="clear-filters">Clear Filters</button>
+      </aside>
+
+      <!-- Products -->
+      <div>
+        <div class="toolbar">
+          <span id="results-count" style="color:var(--ink-soft);font-size:0.9rem">Loading products…</span>
+          <select id="sort-select" style="padding:8px 12px;border:1px solid var(--line);border-radius:6px">
+            <option value="newest">Newest</option>
+            <option value="priceLow">Price: Low to High</option>
+            <option value="priceHigh">Price: High to Low</option>
+            <option value="rating">Highest Rated</option>
+          </select>
+        </div>
+        <div id="products-grid" class="grid product-grid"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="grid footer-grid">
+      <div>
+        <a href="/index.html" class="logo">Lucky<span>Collection</span></a>
+        <p style="margin-top:12px;font-size:0.88rem;max-width:280px">Authentic silk and handloom cotton sarees, woven across Karnataka and delivered across India.</p>
+      </div>
+      <div><h4>Shop</h4><a href="/products.html?category=silk">Silk Sarees</a><a href="/products.html?category=cotton">Cotton Sarees</a><a href="/products.html?category=designer">Designer Sarees</a></div>
+      <div><h4>Company</h4><a href="/about.html">About Us</a><a href="/contact.html">Contact</a><a href="/orders.html">Track Order</a></div>
+      <div><h4>Policies</h4><a href="/privacy.html">Privacy Policy</a><a href="/terms.html">Terms of Service</a><a href="/refund-policy.html">Refund Policy</a><a href="/shipping-policy.html">Shipping Policy</a></div>
+      <div><h4>Get in Touch</h4><p style="font-size:0.88rem">support@luckycollection.in</p><p style="font-size:0.88rem">+91 98765 43210</p></div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 Lucky Collection. All rights reserved.</span></div>
+  </div>
+</footer>
+
+<script type="module">
+  import { initAuthUI } from "/js/auth.js";
+  import { fetchProducts, renderProductCard } from "/js/products.js";
+  import { filterProductsBySearch, initInstantSearch } from "/js/search.js";
+  import "/js/cart.js";
+  import "/js/wishlist.js";
+  import "/js/script.js";
+
+  initAuthUI();
+  initInstantSearch("nav-search-input", "nav-search-dropdown");
+
+  const params = new URLSearchParams(location.search);
+  const grid = document.getElementById("products-grid");
+  const resultsCount = document.getElementById("results-count");
+  const breadcrumbCurrent = document.getElementById("breadcrumb-current");
+
+  function currentFilters() {
+    const checkedFabrics = [...document.querySelectorAll('input[name=fabric]:checked')].map(c => c.value);
+    const checkedCats = [...document.querySelectorAll('input[name=category]:checked')].map(c => c.value);
+    return {
+      fabrics: checkedFabrics,
+      categories: checkedCats.length ? checkedCats : (params.get("category") ? [params.get("category")] : []),
+      minPrice: document.getElementById("min-price").value ? Number(document.getElementById("min-price").value) : null,
+      maxPrice: document.getElementById("max-price").value ? Number(document.getElementById("max-price").value) : null,
+      inStockOnly: document.getElementById("in-stock-only").checked,
+      sortBy: document.getElementById("sort-select").value,
+      tag: params.get("tag"),
+      occasion: params.get("occasion"),
+      q: params.get("q")
+    };
+  }
+
+  async function loadAndRender() {
+    grid.innerHTML = Array(8).fill('<div class="product-card"><div class="thumb-wrap skeleton"></div></div>').join("");
+    const f = currentFilters();
+    let products = await fetchProducts({ tag: f.tag, sortBy: f.sortBy, minPrice: f.minPrice, maxPrice: f.maxPrice, limit: 100 });
+
+    if (f.fabrics.length) products = products.filter(p => f.fabrics.includes(p.fabric));
+    if (f.categories.length) products = products.filter(p => f.categories.includes(p.category));
+    if (f.occasion) products = products.filter(p => p.occasion === f.occasion);
+    if (f.inStockOnly) products = products.filter(p => p.stock > 0);
+    if (f.q) products = filterProductsBySearch(products, f.q);
+
+    grid.innerHTML = "";
+    resultsCount.textContent = `${products.length} product${products.length !== 1 ? "s" : ""} found`;
+    if (f.q) breadcrumbCurrent.textContent = `Search: "${f.q}"`;
+    else if (f.categories[0]) breadcrumbCurrent.textContent = f.categories[0][0].toUpperCase() + f.categories[0].slice(1) + " Sarees";
+
+    if (!products.length) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="icon">🔍</div><h3>No sarees match your filters</h3><p>Try clearing some filters.</p></div>`;
+      return;
+    }
+    products.forEach(p => grid.appendChild(renderProductCard(p)));
+    window.initScrollReveal();
+  }
+
+  document.querySelectorAll('input[name=fabric], input[name=category], #in-stock-only').forEach(el => el.addEventListener("change", loadAndRender));
+  document.getElementById("sort-select").addEventListener("change", loadAndRender);
+  document.getElementById("min-price").addEventListener("change", loadAndRender);
+  document.getElementById("max-price").addEventListener("change", loadAndRender);
+  document.getElementById("clear-filters").addEventListener("click", () => {
+    document.querySelectorAll('input[type=checkbox]').forEach(c => c.checked = false);
+    document.getElementById("min-price").value = "";
+    document.getElementById("max-price").value = "";
+    window.location.href = "/products.html";
+  });
+
+  loadAndRender();
+</script>
+</body>
+</html>

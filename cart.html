@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Cart — Lucky Collection</title>
+<meta name="theme-color" content="#6B1E3C">
+<link rel="icon" href="/icons/favicon.svg">
+<script src="/js/config.js"></script>
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/responsive.css">
+<link rel="stylesheet" href="/css/animations.css">
+</head>
+<body>
+<div class="announce-bar">Free shipping on orders above ₹1,999</div>
+<header class="navbar">
+  <div class="nav-inner">
+    <a href="/index.html" class="logo">Lucky<span>Collection</span></a>
+    <nav class="nav-links"><a href="/index.html">Home</a><a href="/products.html">Sarees</a><a href="/about.html">About</a><a href="/contact.html">Contact</a></nav>
+    <div class="nav-search" style="visibility:hidden"></div>
+    <div class="nav-actions">
+      <a href="/wishlist.html" class="nav-icon-btn">♥<span class="badge" data-wishlist-count style="display:none">0</span></a>
+      <a href="/cart.html" class="nav-icon-btn active">🛍<span class="badge" data-cart-count style="display:none">0</span></a>
+      <a href="/login.html" class="nav-icon-btn" data-account-link>👤</a>
+      <button class="mobile-menu-btn nav-icon-btn">☰</button>
+    </div>
+  </div>
+</header>
+<div class="mobile-drawer-overlay"></div>
+<div class="mobile-drawer"><a href="/index.html">Home</a><a href="/products.html">All Sarees</a><a href="/wishlist.html">Wishlist</a><a href="/orders.html">My Orders</a></div>
+
+<section class="section">
+  <div class="container">
+    <h1 class="mb-2">Your Cart</h1>
+    <div id="cart-content" class="grid cart-layout"></div>
+  </div>
+</section>
+
+<section class="section" style="background:var(--ivory-deep)">
+  <div class="container">
+    <div class="section-heading reveal"><span class="eyebrow">Complete the Look</span><h2>You Might Also Like</h2></div>
+    <div id="upsell-grid" class="grid product-grid"></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="grid footer-grid">
+      <div><a href="/index.html" class="logo">Lucky<span>Collection</span></a></div>
+      <div><h4>Shop</h4><a href="/products.html?category=silk">Silk Sarees</a></div>
+      <div><h4>Company</h4><a href="/about.html">About Us</a></div>
+      <div><h4>Policies</h4><a href="/refund-policy.html">Refund Policy</a></div>
+      <div><h4>Get in Touch</h4><p style="font-size:0.88rem">support@luckycollection.in</p></div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 Lucky Collection. All rights reserved.</span></div>
+  </div>
+</footer>
+
+<script type="module">
+  import { initAuthUI } from "/js/auth.js";
+  import { getCart, updateQty, removeFromCart, getCartTotals } from "/js/cart.js";
+  import { formatPrice, fetchProducts, renderProductCard } from "/js/products.js";
+  import { showToast } from "/js/script.js";
+  import "/js/wishlist.js";
+
+  initAuthUI();
+
+  function renderCart() {
+    const cart = getCart();
+    const root = document.getElementById("cart-content");
+    if (!cart.length) {
+      root.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+        <div class="icon">🛍</div><h3>Your cart is empty</h3><p class="mb-2">Looks like you haven't added any sarees yet.</p>
+        <a href="/products.html" class="btn btn-primary">Start Shopping</a>
+      </div>`;
+      return;
+    }
+    const totals = getCartTotals();
+    root.innerHTML = `
+      <div>
+        <div id="cart-items"></div>
+      </div>
+      <div class="summary-card">
+        <h3 class="mb-1">Order Summary</h3>
+        <div class="coupon-row">
+          <input type="text" id="coupon-input" placeholder="Coupon code">
+          <button class="btn btn-outline btn-sm" id="apply-coupon-btn">Apply</button>
+        </div>
+        <div id="coupon-msg" style="font-size:0.82rem;margin-bottom:8px"></div>
+        <div class="summary-row"><span>Subtotal</span><span id="sum-subtotal">${formatPrice(totals.subtotal)}</span></div>
+        <div class="summary-row"><span>GST (${BUSINESS_CONFIG.gstPercent}%)</span><span id="sum-gst">${formatPrice(totals.gst)}</span></div>
+        <div class="summary-row"><span>Shipping</span><span id="sum-shipping">${totals.shipping === 0 ? "FREE" : formatPrice(totals.shipping)}</span></div>
+        <div class="summary-row total"><span>Total</span><span id="sum-total">${formatPrice(totals.total)}</span></div>
+        <a href="/checkout.html" class="btn btn-primary btn-block mt-1">Proceed to Checkout</a>
+        <p style="font-size:0.78rem;color:var(--ink-soft);margin-top:10px;text-align:center">🔒 Secure checkout via UPI, Cards &amp; Net Banking. No Cash on Delivery.</p>
+      </div>`;
+
+    const itemsEl = document.getElementById("cart-items");
+    cart.forEach((item) => {
+      const div = document.createElement("div");
+      div.className = "cart-item";
+      div.innerHTML = `
+        <a href="/product.html?id=${item.id}"><img src="${item.image}" alt="${item.name}"></a>
+        <div>
+          <a href="/product.html?id=${item.id}"><h4>${item.name}</h4></a>
+          ${item.color ? `<div style="font-size:0.82rem;color:var(--ink-soft)">Color: ${item.color}</div>` : ""}
+          <div class="price mt-1" style="font-size:0.98rem">${formatPrice(item.price)}</div>
+          <div class="qty-stepper mt-1">
+            <button data-minus>−</button>
+            <input type="text" value="${item.qty}" readonly>
+            <button data-plus>+</button>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <button class="btn-icon" data-remove title="Remove" style="color:var(--danger)">✕</button>
+          <div class="price mt-2">${formatPrice(item.price * item.qty)}</div>
+        </div>`;
+      div.querySelector("[data-minus]").addEventListener("click", () => { updateQty(item.key, item.qty - 1); renderCart(); });
+      div.querySelector("[data-plus]").addEventListener("click", () => { updateQty(item.key, item.qty + 1); renderCart(); });
+      div.querySelector("[data-remove]").addEventListener("click", () => { removeFromCart(item.key); showToast("Item removed from cart", "info"); renderCart(); });
+      itemsEl.appendChild(div);
+    });
+
+    document.getElementById("apply-coupon-btn").addEventListener("click", async () => {
+      const code = document.getElementById("coupon-input").value.trim();
+      const msg = document.getElementById("coupon-msg");
+      if (!code) return;
+      try {
+        const { applyCoupon } = await import("/js/checkout.js");
+        const coupon = await applyCoupon(code);
+        msg.style.color = "var(--success)";
+        msg.textContent = `Coupon "${coupon.code}" applied! You saved ${formatPrice(coupon.discount)}.`;
+        const t = getCartTotals(coupon.discount);
+        document.getElementById("sum-subtotal").textContent = formatPrice(t.subtotal);
+        document.getElementById("sum-gst").textContent = formatPrice(t.gst);
+        document.getElementById("sum-shipping").textContent = t.shipping === 0 ? "FREE" : formatPrice(t.shipping);
+        document.getElementById("sum-total").textContent = formatPrice(t.total);
+      } catch (err) {
+        msg.style.color = "var(--danger)";
+        msg.textContent = err.message;
+      }
+    });
+  }
+
+  renderCart();
+  fetchProducts({ tag: "trending", limit: 4 }).then(products => {
+    products.forEach(p => document.getElementById("upsell-grid").appendChild(renderProductCard(p)));
+    window.initScrollReveal?.();
+  });
+</script>
+</body>
+</html>

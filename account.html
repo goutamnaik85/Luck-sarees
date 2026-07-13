@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Account — Lucky Collection</title>
+<meta name="theme-color" content="#6B1E3C">
+<link rel="icon" href="/icons/favicon.svg">
+<script src="/js/config.js"></script>
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/responsive.css">
+<link rel="stylesheet" href="/css/animations.css">
+</head>
+<body data-requires-auth="true">
+<div class="announce-bar">Free shipping on orders above ₹1,999</div>
+<header class="navbar">
+  <div class="nav-inner">
+    <a href="/index.html" class="logo">Lucky<span>Collection</span></a>
+    <nav class="nav-links"><a href="/index.html">Home</a><a href="/products.html">Sarees</a><a href="/about.html">About</a><a href="/contact.html">Contact</a></nav>
+    <div class="nav-search" style="visibility:hidden"></div>
+    <div class="nav-actions">
+      <a href="/wishlist.html" class="nav-icon-btn">♥<span class="badge" data-wishlist-count style="display:none">0</span></a>
+      <a href="/cart.html" class="nav-icon-btn">🛍<span class="badge" data-cart-count style="display:none">0</span></a>
+      <a href="/account.html" class="nav-icon-btn active" data-account-link>👤</a>
+      <button class="mobile-menu-btn nav-icon-btn">☰</button>
+    </div>
+  </div>
+</header>
+<div class="mobile-drawer-overlay"></div>
+<div class="mobile-drawer"><a href="/index.html">Home</a><a href="/products.html">All Sarees</a><a href="/orders.html">My Orders</a></div>
+
+<section class="section">
+  <div class="container">
+    <div class="grid account-layout">
+      <aside class="account-sidebar">
+        <a href="/account.html" class="active">👤 Profile</a>
+        <a href="/orders.html">📦 My Orders</a>
+        <a href="/wishlist.html">♥ Wishlist</a>
+        <a href="#" data-logout>↪ Logout</a>
+      </aside>
+      <div>
+        <h1 class="mb-2">My Profile</h1>
+        <div class="auth-card" style="max-width:100%;padding:var(--space-6)">
+          <form id="profile-form">
+            <div class="form-row-2">
+              <div class="form-group"><label>Full Name</label><input type="text" name="name" required></div>
+              <div class="form-group"><label>Phone</label><input type="tel" name="phone" maxlength="10"></div>
+            </div>
+            <div class="form-group"><label>Email</label><input type="email" name="email" disabled></div>
+            <button class="btn btn-primary" type="submit">Save Changes</button>
+          </form>
+        </div>
+
+        <h3 class="mt-3 mb-1">Recent Orders</h3>
+        <div id="recent-orders"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script type="module">
+  import { initAuthUI, getUserProfile, updateUserProfile } from "/js/auth.js";
+  import { onAuthStateChanged } from "/js/firebase.js";
+  import { fetchUserOrders, renderOrderCard } from "/js/orders.js";
+  import { showToast } from "/js/script.js";
+
+  initAuthUI();
+  let currentUid = null;
+
+  onAuthStateChanged(async (user) => {
+    if (!user) return;
+    currentUid = user.uid;
+    const profile = await getUserProfile(user.uid);
+    const form = document.getElementById("profile-form");
+    form.name.value = profile?.name || user.displayName || "";
+    form.phone.value = profile?.phone || "";
+    form.email.value = user.email;
+
+    const orders = (await fetchUserOrders(user.uid)).slice(0, 3);
+    const el = document.getElementById("recent-orders");
+    if (!orders.length) { el.innerHTML = `<p style="color:var(--ink-soft)">No orders yet.</p>`; }
+    else orders.forEach(o => el.appendChild(renderOrderCard(o)));
+  });
+
+  document.getElementById("profile-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    await updateUserProfile(currentUid, { name: form.name.value, phone: form.phone.value });
+    showToast("Profile updated successfully", "success");
+  });
+</script>
+</body>
+</html>

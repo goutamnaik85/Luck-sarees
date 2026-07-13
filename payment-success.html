@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Confirmed — Lucky Collection</title>
+<meta name="theme-color" content="#6B1E3C">
+<link rel="icon" href="/icons/favicon.svg">
+<script src="/js/config.js"></script>
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/responsive.css">
+<link rel="stylesheet" href="/css/animations.css">
+</head>
+<body>
+<header class="navbar"><div class="nav-inner"><a href="/index.html" class="logo">Lucky<span>Collection</span></a></div></header>
+
+<section class="section">
+  <div class="container" style="max-width:600px">
+    <div class="checkout-steps">
+      <div class="checkout-step done"><span class="dot">✓</span><span class="label">Cart</span></div>
+      <div class="checkout-step done"><span class="dot">✓</span><span class="label">Address &amp; Payment</span></div>
+      <div class="checkout-step active"><span class="dot">✓</span><span class="label">Confirmation</span></div>
+    </div>
+    <div class="text-center">
+      <div style="width:88px;height:88px;border-radius:50%;background:#DDF5DD;color:var(--success);font-size:2.6rem;display:flex;align-items:center;justify-content:center;margin:0 auto var(--space-5)" class="scaleIn">✓</div>
+      <h1>Order Confirmed!</h1>
+      <p class="mt-1">Thank you for shopping with Lucky Collection. A confirmation email is on its way.</p>
+      <div class="order-card mt-2" style="text-align:left">
+        <div class="flex-between"><span style="color:var(--ink-soft)">Order ID</span><strong id="order-id">—</strong></div>
+        <div class="flex-between mt-1"><span style="color:var(--ink-soft)">Amount Paid</span><strong id="order-amount">—</strong></div>
+        <div class="flex-between mt-1"><span style="color:var(--ink-soft)">Delivery To</span><strong id="order-address">—</strong></div>
+      </div>
+      <div class="flex" style="gap:12px;justify-content:center;margin-top:var(--space-6)">
+        <a href="/orders.html" class="btn btn-primary">Track Order</a>
+        <a href="/products.html" class="btn btn-outline">Continue Shopping</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script type="module">
+  import { fetchOrder } from "/js/orders.js";
+  import { formatPrice } from "/js/products.js";
+
+  const orderId = new URLSearchParams(location.search).get("orderId");
+  if (orderId) {
+    fetchOrder(orderId).then((order) => {
+      if (!order) return;
+      document.getElementById("order-id").textContent = "#" + orderId.slice(0, 8).toUpperCase();
+      document.getElementById("order-amount").textContent = formatPrice(order.totals.total);
+      document.getElementById("order-address").textContent = `${order.address.city}, ${order.address.state}`;
+    });
+  }
+</script>
+</body>
+</html>

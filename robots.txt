@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /account.html
+Disallow: /checkout.html
+Disallow: /orders.html
+Disallow: /cart.html
+
+Sitemap: https://www.luckycollection.in/sitemap.xml
