@@ -1,0 +1,106 @@
+/* =========================================================================
+   LUCKY COLLECTION — ANIMATIONS
+   Motion is used sparingly: an orchestrated hero entrance, scroll reveals,
+   and small hover feedback. Respect for prefers-reduced-motion is handled
+   globally in styles.css.
+   ========================================================================= */
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes drawZari {
+  from { background-position: 0 0; }
+  to { background-position: 56px 0; }
+}
+
+/* Hero entrance sequence — staggered so it reads as one orchestrated moment */
+.hero-eyebrow { animation: fadeInUp 0.7s ease both; }
+.hero h1 { animation: fadeInUp 0.7s ease 0.1s both; }
+.hero p.lede { animation: fadeInUp 0.7s ease 0.2s both; }
+.hero-cta { animation: fadeInUp 0.7s ease 0.3s both; }
+.hero-stats { animation: fadeInUp 0.7s ease 0.4s both; }
+.hero-visual { animation: scaleIn 0.8s ease 0.2s both; }
+.hero-visual .float-card { animation: fadeInUp 0.7s ease 0.6s both; }
+
+/* Ambient motion on the signature zari border — subtle, never distracting */
+.zari-border { animation: drawZari 3.5s linear infinite; }
+
+/* Scroll reveal utility — toggled by IntersectionObserver in script.js */
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.in-view { opacity: 1; transform: translateY(0); }
+
+.stagger-in > * { animation: fadeInUp 0.5s ease both; }
+.stagger-in > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-in > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-in > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-in > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-in > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-in > *:nth-child(6) { animation-delay: 0.3s; }
+
+/* Toast entrance */
+.toast { animation: slideInRight 0.3s ease both; }
+
+/* Modal / drawer */
+.modal-overlay { animation: fadeIn 0.2s ease both; }
+.modal-box { animation: scaleIn 0.25s ease both; }
+
+/* Loading spinner */
+.spinner {
+  width: 22px; height: 22px; border: 2.5px solid rgba(107,30,60,0.2); border-top-color: var(--maroon);
+  border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block;
+}
+.spinner.light { border-color: rgba(255,255,255,0.3); border-top-color: var(--white); }
+.page-loader {
+  position: fixed; inset: 0; background: var(--ivory); z-index: 999; display: flex; align-items: center;
+  justify-content: center; transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+.page-loader.hide { opacity: 0; visibility: hidden; }
+
+/* Float badge */
+.floaty { animation: floatY 3.5s ease-in-out infinite; }
+
+/* Wishlist heart pop */
+@keyframes heartPop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+.heart-pop { animation: heartPop 0.35s ease; }
+
+/* Add-to-cart button feedback */
+@keyframes pulseOnce {
+  0% { box-shadow: 0 0 0 0 rgba(107,30,60,0.4); }
+  100% { box-shadow: 0 0 0 14px rgba(107,30,60,0); }
+}
+.pulse-once { animation: pulseOnce 0.6s ease-out; }
