@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coupons — Admin — Lucky Collection</title>
+<link rel="icon" href="/icons/favicon.svg">
+<script src="/js/config.js"></script>
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/responsive.css">
+<link rel="stylesheet" href="/css/animations.css">
+<style>
+  .admin-shell { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+  .admin-sidebar { background: var(--maroon-dark); color: rgba(255,255,255,0.85); padding: var(--space-6) var(--space-4); }
+  .admin-sidebar a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 4px; }
+  .admin-sidebar a:hover, .admin-sidebar a.active { background: rgba(255,255,255,0.1); color: #fff; }
+  .admin-main { padding: var(--space-6) var(--space-7); background: var(--ivory); }
+  .admin-table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 10px; overflow: hidden; }
+  .admin-table th { text-align: left; font-size: 0.75rem; text-transform: uppercase; color: var(--ink-soft); padding: 12px 14px; background: var(--ivory-deep); }
+  .admin-table td { padding: 12px 14px; border-top: 1px solid var(--line); font-size: 0.88rem; }
+  @media (max-width: 900px) { .admin-shell { grid-template-columns: 1fr; } .admin-sidebar { display: flex; overflow-x: auto; padding: var(--space-3); } .admin-sidebar a { white-space: nowrap; } }
+</style>
+</head>
+<body>
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="logo" style="color:#fff;margin-bottom:var(--space-6)">Lucky<span style="color:var(--gold-light)">Admin</span></div>
+    <a href="/admin/dashboard.html">📊 Dashboard</a>
+    <a href="/admin/products.html">🧵 Products</a>
+    <a href="/admin/orders.html">📦 Orders</a>
+    <a href="/admin/customers.html">👥 Customers</a>
+    <a href="/admin/coupons.html" class="active">🏷 Coupons</a>
+    <a href="/index.html">🌐 View Store</a>
+    <a href="#" data-logout>↪ Logout</a>
+  </aside>
+  <main class="admin-main">
+    <div class="flex-between mb-2"><h1>Coupons</h1></div>
+    <div class="stat-card" style="background:var(--card);border:1px solid var(--line);border-radius:12px;padding:var(--space-5);margin-bottom:var(--space-5)">
+      <h4 class="mb-1">Create Coupon</h4>
+      <form id="coupon-form" class="grid" style="grid-template-columns:1fr 1fr 1fr 1fr auto;gap:12px;align-items:end">
+        <div class="form-group" style="margin:0"><label>Code</label><input type="text" name="code" required style="text-transform:uppercase"></div>
+        <div class="form-group" style="margin:0"><label>Type</label><select name="type"><option value="percent">% Off</option><option value="flat">Flat ₹ Off</option></select></div>
+        <div class="form-group" style="margin:0"><label>Value</label><input type="number" name="value" required></div>
+        <div class="form-group" style="margin:0"><label>Min Order (₹)</label><input type="number" name="minOrderValue" value="0"></div>
+        <button class="btn btn-primary" type="submit">Add</button>
+      </form>
+    </div>
+    <table class="admin-table">
+      <thead><tr><th>Code</th><th>Type</th><th>Value</th><th>Min Order</th><th>Actions</th></tr></thead>
+      <tbody id="coupons-table-body"><tr><td colspan="5" style="padding:20px">Loading…</td></tr></tbody>
+    </table>
+  </main>
+</div>
+<script type="module">
+  import { requireAdmin, adminFetchCoupons, adminCreateCoupon, adminDeleteCoupon } from "/js/admin.js";
+  import { formatPrice } from "/js/products.js";
+  import { showToast } from "/js/script.js";
+
+  let coupons = [];
+  function renderTable() {
+    const body = document.getElementById("coupons-table-body");
+    if (!coupons.length) { body.innerHTML = `<tr><td colspan="5" style="padding:20px;color:var(--ink-soft)">No coupons yet.</td></tr>`; return; }
+    body.innerHTML = coupons.map(c => `
+      <tr>
+        <td><strong>${c.code}</strong></td>
+        <td>${c.type === "percent" ? "% Off" : "Flat ₹ Off"}</td>
+        <td>${c.type === "percent" ? c.value + "%" : formatPrice(c.value)}</td>
+        <td>${formatPrice(c.minOrderValue || 0)}</td>
+        <td><button class="btn btn-sm btn-ghost" style="color:var(--danger)" data-delete="${c.id}">Delete</button></td>
+      </tr>`).join("");
+    body.querySelectorAll("[data-delete]").forEach(btn => btn.addEventListener("click", async () => {
+      await adminDeleteCoupon(btn.dataset.delete);
+      coupons = coupons.filter(c => c.id !== btn.dataset.delete);
+      renderTable();
+      showToast("Coupon deleted", "success");
+    }));
+  }
+
+  document.getElementById("coupon-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const data = { code: form.code.value.toUpperCase(), type: form.type.value, value: Number(form.value.value), minOrderValue: Number(form.minOrderValue.value) || 0 };
+    const id = await adminCreateCoupon(data);
+    coupons.unshift({ id, ...data, active: true });
+    renderTable();
+    form.reset();
+    showToast("Coupon created", "success");
+  });
+
+  requireAdmin(async () => {
+    coupons = await adminFetchCoupons();
+    renderTable();
+  });
+
+  document.querySelector("[data-logout]")?.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const { logoutUser } = await import("/js/auth.js");
+    logoutUser();
+  });
+</script>
+</body>
+</html>

@@ -3,196 +3,195 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shop Sarees Online — Silk, Cotton &amp; Designer | Lucky Collection</title>
-<meta name="description" content="Browse our full collection of silk, cotton and designer sarees. Filter by fabric, price, colour and occasion.">
-<meta name="theme-color" content="#6B1E3C">
+<title>Products — Admin — Lucky Collection</title>
 <link rel="icon" href="/icons/favicon.svg">
 <script src="/js/config.js"></script>
 <link rel="stylesheet" href="/css/styles.css">
 <link rel="stylesheet" href="/css/responsive.css">
 <link rel="stylesheet" href="/css/animations.css">
+<style>
+  .admin-shell { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+  .admin-sidebar { background: var(--maroon-dark); color: rgba(255,255,255,0.85); padding: var(--space-6) var(--space-4); }
+  .admin-sidebar a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 4px; }
+  .admin-sidebar a:hover, .admin-sidebar a.active { background: rgba(255,255,255,0.1); color: #fff; }
+  .admin-main { padding: var(--space-6) var(--space-7); background: var(--ivory); }
+  .admin-table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 10px; overflow: hidden; }
+  .admin-table th { text-align: left; font-size: 0.75rem; text-transform: uppercase; color: var(--ink-soft); padding: 12px 14px; background: var(--ivory-deep); }
+  .admin-table td { padding: 12px 14px; border-top: 1px solid var(--line); font-size: 0.88rem; vertical-align: middle; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(36,21,18,0.5); display: none; align-items: center; justify-content: center; z-index: 400; }
+  .modal-overlay.open { display: flex; }
+  .modal-box { background: #fff; border-radius: 14px; padding: var(--space-6); max-width: 560px; width: 92%; max-height: 88vh; overflow-y: auto; }
+  @media (max-width: 900px) { .admin-shell { grid-template-columns: 1fr; } .admin-sidebar { display: flex; overflow-x: auto; padding: var(--space-3); } .admin-sidebar a { white-space: nowrap; } }
+</style>
 </head>
 <body>
-<div class="page-loader"><span class="spinner"></span></div>
-
-<div class="announce-bar">Free shipping on orders above ₹1,999 · Handloom sarees crafted across Karnataka</div>
-<header class="navbar">
-  <div class="nav-inner">
-    <a href="/index.html" class="logo">Lucky<span>Collection</span></a>
-    <nav class="nav-links">
-      <a href="/index.html">Home</a>
-      <a href="/products.html" class="active">Sarees</a>
-      <a href="/about.html">About</a>
-      <a href="/contact.html">Contact</a>
-    </nav>
-    <div class="nav-search">
-      <input type="text" id="nav-search-input" placeholder="Search for silk, cotton, wedding sarees...">
-      <button aria-label="Search">🔍</button>
-      <div class="search-dropdown" id="nav-search-dropdown" style="position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--white);border-radius:10px;box-shadow:var(--shadow-lg);display:none;max-height:400px;overflow-y:auto;z-index:50"></div>
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="logo" style="color:#fff;margin-bottom:var(--space-6)">Lucky<span style="color:var(--gold-light)">Admin</span></div>
+    <a href="/admin/dashboard.html">📊 Dashboard</a>
+    <a href="/admin/products.html" class="active">🧵 Products</a>
+    <a href="/admin/orders.html">📦 Orders</a>
+    <a href="/admin/customers.html">👥 Customers</a>
+    <a href="/admin/coupons.html">🏷 Coupons</a>
+    <a href="/index.html">🌐 View Store</a>
+    <a href="#" data-logout>↪ Logout</a>
+  </aside>
+  <main class="admin-main">
+    <div class="flex-between mb-2">
+      <h1>Products</h1>
+      <button class="btn btn-primary" id="add-product-btn">+ Add Product</button>
     </div>
-    <div class="nav-actions">
-      <a href="/wishlist.html" class="nav-icon-btn" aria-label="Wishlist">♥<span class="badge" data-wishlist-count style="display:none">0</span></a>
-      <a href="/cart.html" class="nav-icon-btn" aria-label="Cart">🛍<span class="badge" data-cart-count style="display:none">0</span></a>
-      <a href="/login.html" class="nav-icon-btn" data-account-link aria-label="Account">👤</a>
-      <button class="mobile-menu-btn nav-icon-btn" aria-label="Menu">☰</button>
-    </div>
-  </div>
-</header>
-<div class="mobile-drawer-overlay"></div>
-<div class="mobile-drawer">
-  <a href="/index.html">Home</a>
-  <a href="/products.html">All Sarees</a>
-  <a href="/products.html?category=silk">Silk Sarees</a>
-  <a href="/products.html?category=cotton">Cotton Sarees</a>
-  <a href="/wishlist.html">Wishlist</a>
-  <a href="/cart.html">Cart</a>
-  <a href="/orders.html">My Orders</a>
-  <a href="/about.html">About</a>
-  <a href="/contact.html">Contact</a>
+    <table class="admin-table">
+      <thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="products-table-body"><tr><td colspan="7" style="padding:20px">Loading…</td></tr></tbody>
+    </table>
+  </main>
 </div>
 
-<div class="container mt-2">
-  <div class="breadcrumb"><a href="/index.html">Home</a><span class="sep">/</span><span id="breadcrumb-current">All Sarees</span></div>
+<div class="modal-overlay" id="product-modal">
+  <div class="modal-box">
+    <h3 class="mb-2" id="modal-title">Add Product</h3>
+    <form id="product-form">
+      <input type="hidden" name="id">
+      <div class="form-row-2">
+        <div class="form-group"><label>Product Name</label><input type="text" name="name" required></div>
+        <div class="form-group"><label>SKU</label><input type="text" name="sku" required></div>
+      </div>
+      <div class="form-group"><label>Description</label><textarea name="description" rows="3"></textarea></div>
+      <div class="form-row-2">
+        <div class="form-group"><label>Category</label><select name="category" required><option value="silk">Silk</option><option value="cotton">Cotton</option><option value="designer">Designer</option></select></div>
+        <div class="form-group"><label>Fabric</label><input type="text" name="fabric" placeholder="e.g. Kanjivaram Silk"></div>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group"><label>MRP (₹)</label><input type="number" name="mrp" required></div>
+        <div class="form-group"><label>Selling Price (₹)</label><input type="number" name="price" required></div>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group"><label>Stock Quantity</label><input type="number" name="stock" required></div>
+        <div class="form-group"><label>Color</label><input type="text" name="color"></div>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group"><label>Occasion</label><input type="text" name="occasion" placeholder="Wedding, Festival..."></div>
+        <div class="form-group"><label>Weight</label><input type="text" name="weight" placeholder="e.g. 700g"></div>
+      </div>
+      <div class="form-group"><label>Product Image</label><input type="file" name="image" accept="image/*"></div>
+      <div class="form-group">
+        <label style="display:flex;gap:16px;flex-wrap:wrap;font-weight:400">
+          <span><input type="checkbox" name="featured"> Featured</span>
+          <span><input type="checkbox" name="trending"> Trending</span>
+          <span><input type="checkbox" name="bestSeller"> Best Seller</span>
+          <span><input type="checkbox" name="active" checked> Active</span>
+        </label>
+      </div>
+      <div class="flex" style="gap:10px;margin-top:var(--space-4)">
+        <button type="submit" class="btn btn-primary" style="flex:1" id="save-product-btn">Save Product</button>
+        <button type="button" class="btn btn-outline" id="cancel-product-btn">Cancel</button>
+      </div>
+    </form>
+  </div>
 </div>
-
-<section class="section" style="padding-top:var(--space-4)">
-  <div class="container">
-    <div class="grid filters-layout">
-      <!-- Filters sidebar -->
-      <aside>
-        <div class="filter-block">
-          <h4>Fabric</h4>
-          <label class="filter-option"><input type="checkbox" name="fabric" value="Kanjivaram Silk"> Kanjivaram Silk</label>
-          <label class="filter-option"><input type="checkbox" name="fabric" value="Banarasi Silk"> Banarasi Silk</label>
-          <label class="filter-option"><input type="checkbox" name="fabric" value="Cotton"> Cotton</label>
-          <label class="filter-option"><input type="checkbox" name="fabric" value="Georgette"> Georgette</label>
-          <label class="filter-option"><input type="checkbox" name="fabric" value="Organza"> Organza</label>
-        </div>
-        <div class="filter-block">
-          <h4>Category</h4>
-          <label class="filter-option"><input type="checkbox" name="category" value="silk"> Silk</label>
-          <label class="filter-option"><input type="checkbox" name="category" value="cotton"> Cotton</label>
-          <label class="filter-option"><input type="checkbox" name="category" value="designer"> Designer</label>
-        </div>
-        <div class="filter-block">
-          <h4>Price Range</h4>
-          <div class="price-range-inputs">
-            <input type="number" id="min-price" placeholder="Min"> <span>–</span> <input type="number" id="max-price" placeholder="Max">
-          </div>
-        </div>
-        <div class="filter-block">
-          <h4>Rating</h4>
-          <label class="filter-option"><input type="checkbox" name="rating" value="4"> 4★ &amp; above</label>
-          <label class="filter-option"><input type="checkbox" name="rating" value="3"> 3★ &amp; above</label>
-        </div>
-        <div class="filter-block">
-          <h4>Availability</h4>
-          <label class="filter-option"><input type="checkbox" id="in-stock-only"> In Stock Only</label>
-        </div>
-        <button class="btn btn-outline btn-block" id="clear-filters">Clear Filters</button>
-      </aside>
-
-      <!-- Products -->
-      <div>
-        <div class="toolbar">
-          <span id="results-count" style="color:var(--ink-soft);font-size:0.9rem">Loading products…</span>
-          <select id="sort-select" style="padding:8px 12px;border:1px solid var(--line);border-radius:6px">
-            <option value="newest">Newest</option>
-            <option value="priceLow">Price: Low to High</option>
-            <option value="priceHigh">Price: High to Low</option>
-            <option value="rating">Highest Rated</option>
-          </select>
-        </div>
-        <div id="products-grid" class="grid product-grid"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<footer class="footer">
-  <div class="container">
-    <div class="grid footer-grid">
-      <div>
-        <a href="/index.html" class="logo">Lucky<span>Collection</span></a>
-        <p style="margin-top:12px;font-size:0.88rem;max-width:280px">Authentic silk and handloom cotton sarees, woven across Karnataka and delivered across India.</p>
-      </div>
-      <div><h4>Shop</h4><a href="/products.html?category=silk">Silk Sarees</a><a href="/products.html?category=cotton">Cotton Sarees</a><a href="/products.html?category=designer">Designer Sarees</a></div>
-      <div><h4>Company</h4><a href="/about.html">About Us</a><a href="/contact.html">Contact</a><a href="/orders.html">Track Order</a></div>
-      <div><h4>Policies</h4><a href="/privacy.html">Privacy Policy</a><a href="/terms.html">Terms of Service</a><a href="/refund-policy.html">Refund Policy</a><a href="/shipping-policy.html">Shipping Policy</a></div>
-      <div><h4>Get in Touch</h4><p style="font-size:0.88rem">support@luckycollection.in</p><p style="font-size:0.88rem">+91 98765 43210</p></div>
-    </div>
-    <div class="footer-bottom"><span>© 2026 Lucky Collection. All rights reserved.</span></div>
-  </div>
-</footer>
 
 <script type="module">
-  import { initAuthUI } from "/js/auth.js";
-  import { fetchProducts, renderProductCard } from "/js/products.js";
-  import { filterProductsBySearch, initInstantSearch } from "/js/search.js";
-  import "/js/cart.js";
-  import "/js/wishlist.js";
-  import "/js/script.js";
+  import { requireAdmin, adminFetchProducts, adminCreateProduct, adminUpdateProduct, adminDeleteProduct, adminUploadProductImage } from "/js/admin.js";
+  import { formatPrice } from "/js/products.js";
+  import { showToast } from "/js/script.js";
 
-  initAuthUI();
-  initInstantSearch("nav-search-input", "nav-search-dropdown");
+  let products = [];
 
-  const params = new URLSearchParams(location.search);
-  const grid = document.getElementById("products-grid");
-  const resultsCount = document.getElementById("results-count");
-  const breadcrumbCurrent = document.getElementById("breadcrumb-current");
+  function renderTable() {
+    const body = document.getElementById("products-table-body");
+    if (!products.length) { body.innerHTML = `<tr><td colspan="7" style="padding:20px;color:var(--ink-soft)">No products yet. Add your first one!</td></tr>`; return; }
+    body.innerHTML = products.map(p => `
+      <tr>
+        <td><img src="${p.images?.[0] || '/images/placeholder-saree.jpg'}" style="width:44px;height:56px;object-fit:cover;border-radius:6px"></td>
+        <td>${p.name}</td>
+        <td>${p.category}</td>
+        <td>${formatPrice(p.price)}</td>
+        <td>${p.stock}</td>
+        <td><span class="status-pill ${p.active ? 'status-delivered' : 'status-cancelled'}">${p.active ? "Active" : "Inactive"}</span></td>
+        <td>
+          <button class="btn btn-sm btn-outline" data-edit="${p.id}">Edit</button>
+          <button class="btn btn-sm btn-ghost" style="color:var(--danger)" data-delete="${p.id}">Delete</button>
+        </td>
+      </tr>`).join("");
 
-  function currentFilters() {
-    const checkedFabrics = [...document.querySelectorAll('input[name=fabric]:checked')].map(c => c.value);
-    const checkedCats = [...document.querySelectorAll('input[name=category]:checked')].map(c => c.value);
-    return {
-      fabrics: checkedFabrics,
-      categories: checkedCats.length ? checkedCats : (params.get("category") ? [params.get("category")] : []),
-      minPrice: document.getElementById("min-price").value ? Number(document.getElementById("min-price").value) : null,
-      maxPrice: document.getElementById("max-price").value ? Number(document.getElementById("max-price").value) : null,
-      inStockOnly: document.getElementById("in-stock-only").checked,
-      sortBy: document.getElementById("sort-select").value,
-      tag: params.get("tag"),
-      occasion: params.get("occasion"),
-      q: params.get("q")
-    };
+    body.querySelectorAll("[data-edit]").forEach(btn => btn.addEventListener("click", () => openModal(products.find(p => p.id === btn.dataset.edit))));
+    body.querySelectorAll("[data-delete]").forEach(btn => btn.addEventListener("click", async () => {
+      if (!confirm("Delete this product? This cannot be undone.")) return;
+      await adminDeleteProduct(btn.dataset.delete);
+      products = products.filter(p => p.id !== btn.dataset.delete);
+      renderTable();
+      showToast("Product deleted", "success");
+    }));
   }
 
-  async function loadAndRender() {
-    grid.innerHTML = Array(8).fill('<div class="product-card"><div class="thumb-wrap skeleton"></div></div>').join("");
-    const f = currentFilters();
-    let products = await fetchProducts({ tag: f.tag, sortBy: f.sortBy, minPrice: f.minPrice, maxPrice: f.maxPrice, limit: 100 });
-
-    if (f.fabrics.length) products = products.filter(p => f.fabrics.includes(p.fabric));
-    if (f.categories.length) products = products.filter(p => f.categories.includes(p.category));
-    if (f.occasion) products = products.filter(p => p.occasion === f.occasion);
-    if (f.inStockOnly) products = products.filter(p => p.stock > 0);
-    if (f.q) products = filterProductsBySearch(products, f.q);
-
-    grid.innerHTML = "";
-    resultsCount.textContent = `${products.length} product${products.length !== 1 ? "s" : ""} found`;
-    if (f.q) breadcrumbCurrent.textContent = `Search: "${f.q}"`;
-    else if (f.categories[0]) breadcrumbCurrent.textContent = f.categories[0][0].toUpperCase() + f.categories[0].slice(1) + " Sarees";
-
-    if (!products.length) {
-      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="icon">🔍</div><h3>No sarees match your filters</h3><p>Try clearing some filters.</p></div>`;
-      return;
+  function openModal(product = null) {
+    const form = document.getElementById("product-form");
+    form.reset();
+    document.getElementById("modal-title").textContent = product ? "Edit Product" : "Add Product";
+    if (product) {
+      form.id.value = product.id;
+      for (const key of ["name","sku","description","category","fabric","mrp","price","stock","color","occasion","weight"]) {
+        if (form[key]) form[key].value = product[key] ?? "";
+      }
+      form.featured.checked = !!product.featured;
+      form.trending.checked = !!product.trending;
+      form.bestSeller.checked = !!product.bestSeller;
+      form.active.checked = product.active !== false;
     }
-    products.forEach(p => grid.appendChild(renderProductCard(p)));
-    window.initScrollReveal();
+    document.getElementById("product-modal").classList.add("open");
   }
+  function closeModal() { document.getElementById("product-modal").classList.remove("open"); }
 
-  document.querySelectorAll('input[name=fabric], input[name=category], #in-stock-only').forEach(el => el.addEventListener("change", loadAndRender));
-  document.getElementById("sort-select").addEventListener("change", loadAndRender);
-  document.getElementById("min-price").addEventListener("change", loadAndRender);
-  document.getElementById("max-price").addEventListener("change", loadAndRender);
-  document.getElementById("clear-filters").addEventListener("click", () => {
-    document.querySelectorAll('input[type=checkbox]').forEach(c => c.checked = false);
-    document.getElementById("min-price").value = "";
-    document.getElementById("max-price").value = "";
-    window.location.href = "/products.html";
+  document.getElementById("add-product-btn").addEventListener("click", () => openModal());
+  document.getElementById("cancel-product-btn").addEventListener("click", closeModal);
+
+  document.getElementById("product-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const btn = document.getElementById("save-product-btn");
+    btn.disabled = true; btn.innerHTML = '<span class="spinner light"></span> Saving…';
+    try {
+      const data = {
+        name: form.name.value, sku: form.sku.value, description: form.description.value,
+        category: form.category.value, fabric: form.fabric.value,
+        mrp: Number(form.mrp.value), price: Number(form.price.value), stock: Number(form.stock.value),
+        color: form.color.value, occasion: form.occasion.value, weight: form.weight.value,
+        featured: form.featured.checked, trending: form.trending.checked, bestSeller: form.bestSeller.checked,
+        active: form.active.checked
+      };
+      if (form.image.files[0]) {
+        const url = await adminUploadProductImage(form.image.files[0], data.sku);
+        data.images = [url];
+      }
+      if (form.id.value) {
+        await adminUpdateProduct(form.id.value, data);
+        products = products.map(p => p.id === form.id.value ? { ...p, ...data } : p);
+        showToast("Product updated", "success");
+      } else {
+        const id = await adminCreateProduct({ ...data, images: data.images || ["/images/placeholder-saree.jpg"] });
+        products.unshift({ id, ...data });
+        showToast("Product added", "success");
+      }
+      renderTable();
+      closeModal();
+    } catch (err) {
+      showToast(err.message, "error");
+    } finally {
+      btn.disabled = false; btn.textContent = "Save Product";
+    }
   });
 
-  loadAndRender();
+  requireAdmin(async () => {
+    products = await adminFetchProducts();
+    renderTable();
+  });
+
+  document.querySelector("[data-logout]")?.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const { logoutUser } = await import("/js/auth.js");
+    logoutUser();
+  });
 </script>
 </body>
 </html>

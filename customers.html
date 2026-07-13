@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customers — Admin — Lucky Collection</title>
+<link rel="icon" href="/icons/favicon.svg">
+<script src="/js/config.js"></script>
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/responsive.css">
+<link rel="stylesheet" href="/css/animations.css">
+<style>
+  .admin-shell { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+  .admin-sidebar { background: var(--maroon-dark); color: rgba(255,255,255,0.85); padding: var(--space-6) var(--space-4); }
+  .admin-sidebar a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 4px; }
+  .admin-sidebar a:hover, .admin-sidebar a.active { background: rgba(255,255,255,0.1); color: #fff; }
+  .admin-main { padding: var(--space-6) var(--space-7); background: var(--ivory); }
+  .admin-table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 10px; overflow: hidden; }
+  .admin-table th { text-align: left; font-size: 0.75rem; text-transform: uppercase; color: var(--ink-soft); padding: 12px 14px; background: var(--ivory-deep); }
+  .admin-table td { padding: 12px 14px; border-top: 1px solid var(--line); font-size: 0.88rem; }
+  @media (max-width: 900px) { .admin-shell { grid-template-columns: 1fr; } .admin-sidebar { display: flex; overflow-x: auto; padding: var(--space-3); } .admin-sidebar a { white-space: nowrap; } }
+</style>
+</head>
+<body>
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="logo" style="color:#fff;margin-bottom:var(--space-6)">Lucky<span style="color:var(--gold-light)">Admin</span></div>
+    <a href="/admin/dashboard.html">📊 Dashboard</a>
+    <a href="/admin/products.html">🧵 Products</a>
+    <a href="/admin/orders.html">📦 Orders</a>
+    <a href="/admin/customers.html" class="active">👥 Customers</a>
+    <a href="/admin/coupons.html">🏷 Coupons</a>
+    <a href="/index.html">🌐 View Store</a>
+    <a href="#" data-logout>↪ Logout</a>
+  </aside>
+  <main class="admin-main">
+    <h1 class="mb-2">Customers</h1>
+    <table class="admin-table">
+      <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Joined</th></tr></thead>
+      <tbody id="customers-table-body"><tr><td colspan="4" style="padding:20px">Loading…</td></tr></tbody>
+    </table>
+  </main>
+</div>
+<script type="module">
+  import { requireAdmin, adminFetchCustomers } from "/js/admin.js";
+
+  requireAdmin(async () => {
+    const customers = await adminFetchCustomers();
+    const body = document.getElementById("customers-table-body");
+    if (!customers.length) { body.innerHTML = `<tr><td colspan="4" style="padding:20px;color:var(--ink-soft)">No customers yet.</td></tr>`; return; }
+    body.innerHTML = customers.map(c => `
+      <tr>
+        <td>${c.name || "—"}</td>
+        <td>${c.email}</td>
+        <td>${c.phone || "—"}</td>
+        <td>${c.createdAt?.toDate ? c.createdAt.toDate().toLocaleDateString("en-IN") : "—"}</td>
+      </tr>`).join("");
+  });
+
+  document.querySelector("[data-logout]")?.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const { logoutUser } = await import("/js/auth.js");
+    logoutUser();
+  });
+</script>
+</body>
+</html>
